@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { History, Trash2, Eye, Calendar, Leaf, X } from 'lucide-react'
-import { ScanHistory, PredictionResult } from '../types'
+import { ScanHistory, PredictionResult } from './types'
 
 export default function HistorySection() {
   const [scanHistory, setScanHistory] = useState<ScanHistory[]>([])

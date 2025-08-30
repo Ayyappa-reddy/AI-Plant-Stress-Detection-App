@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, Camera, X, Loader2 } from 'lucide-react'
-import { PredictionResult, UploadState } from '../types'
+import { PredictionResult, UploadState } from './types'
 
 interface ImageUploadProps {
   onAnalysisStart: () => void
