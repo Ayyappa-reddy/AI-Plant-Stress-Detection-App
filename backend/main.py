@@ -10,6 +10,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
+import os
 
 # Define the model class here to avoid import issues
 class PlantDiseaseModel(nn.Module):
@@ -72,7 +73,7 @@ EMAIL_CONFIG = {
     "smtp_server": "smtp.gmail.com",
     "smtp_port": 587,
     "sender_email": "ayyappareddyyennam@gmail.com",
-    "sender_password": "klqo xvqq frxm nhiv",  # You'll need to generate this
+    "sender_password": os.getenv("GMAIL_APP_PASSWORD", "YOUR_APP_PASSWORD_HERE"), # Use environment variable
     "recipient_email": "ayyappareddyyennam@gmail.com"
 }
 
