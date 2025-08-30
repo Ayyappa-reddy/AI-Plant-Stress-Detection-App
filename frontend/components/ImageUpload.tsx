@@ -21,17 +21,17 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
-    setUploadState(prev => ({ ...prev, isDragging: true }))
+    setUploadState((prev: UploadState) => ({ ...prev, isDragging: true }))
   }, [])
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault()
-    setUploadState(prev => ({ ...prev, isDragging: false }))
+    setUploadState((prev: UploadState) => ({ ...prev, isDragging: false }))
   }, [])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
-    setUploadState(prev => ({ ...prev, isDragging: false }))
+    setUploadState((prev: UploadState) => ({ ...prev, isDragging: false }))
     
     const files = e.dataTransfer.files
     if (files.length > 0) {
@@ -42,13 +42,13 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
   const handleFileSelect = (file: File) => {
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      setUploadState(prev => ({ ...prev, error: 'Please select an image file' }))
+      setUploadState((prev: UploadState) => ({ ...prev, error: 'Please select an image file' }))
       return
     }
 
     // Validate file size (10MB limit)
     if (file.size > 10 * 1024 * 1024) {
-      setUploadState(prev => ({ ...prev, error: 'File size must be less than 10MB' }))
+      setUploadState((prev: UploadState) => ({ ...prev, error: 'File size must be less than 10MB' }))
       return
     }
 
@@ -107,7 +107,7 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
       // Transform the result to match our interface
       const transformedResult: PredictionResult = {
         predicted_class: result.predicted_class,
-        formatted_class_name: result.predicted_class.replace(/_/g, ' ').replace(/\s+/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        formatted_class_name: result.predicted_class.replace(/_/g, ' ').replace(/\s+/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()),
         confidence: result.confidence,
         severity: result.confidence >= 90 ? 'High' : result.confidence >= 70 ? 'Medium' : result.confidence >= 50 ? 'Low' : 'Very Low',
         top_predictions: result.top3_predictions || [],
@@ -122,7 +122,7 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
       onPredictionComplete(transformedResult)
     } catch (error) {
       console.error('Error analyzing image:', error)
-      setUploadState(prev => ({ ...prev, error: 'Failed to analyze image. Please try again.' }))
+      setUploadState((prev: UploadState) => ({ ...prev, error: 'Failed to analyze image. Please try again.' }))
     }
   }
 
@@ -154,7 +154,8 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
         {!uploadState.preview ? (
           <div className="space-y-4">
             <motion.div
-              animate={{ float: true }}
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="inline-block"
             >
               <Upload className="w-16 h-16 text-soil-400 dark:text-soil-500 mx-auto" />
