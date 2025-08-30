@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, Camera, X, Loader2 } from 'lucide-react'
 import { PredictionResult, UploadState } from '../types'
@@ -21,17 +21,17 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
-    setUploadState(prev => ({ ...prev, isDragging: true }))
+    setUploadState((prev: UploadState) => ({ ...prev, isDragging: true }))
   }, [])
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault()
-    setUploadState(prev => ({ ...prev, isDragging: false }))
+    setUploadState((prev: UploadState) => ({ ...prev, isDragging: false }))
   }, [])
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
-    setUploadState(prev => ({ ...prev, isDragging: false }))
+    setUploadState((prev: UploadState) => ({ ...prev, isDragging: false }))
     
     const files = e.dataTransfer.files
     if (files.length > 0) {
@@ -154,7 +154,8 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
         {!uploadState.preview ? (
           <div className="space-y-4">
             <motion.div
-              animate={{ float: true }}
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
               className="inline-block"
             >
               <Upload className="w-16 h-16 text-soil-400 dark:text-soil-500 mx-auto" />
