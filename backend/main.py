@@ -324,6 +324,41 @@ async def root():
         "available_files": os.listdir(".") if os.path.exists(".") else []
     }
 
+@app.get("/debug/models")
+async def debug_models():
+    """Debug endpoint to see what's in the models folder"""
+    import os
+    try:
+        models_dir = "./models"
+        if os.path.exists(models_dir):
+            files = os.listdir(models_dir)
+            file_details = []
+            for file in files:
+                file_path = os.path.join(models_dir, file)
+                if os.path.isfile(file_path):
+                    size = os.path.getsize(file_path)
+                    file_details.append({
+                        "name": file,
+                        "size_bytes": size,
+                        "size_mb": round(size / (1024 * 1024), 2)
+                    })
+            return {
+                "models_folder_exists": True,
+                "models_folder_path": os.path.abspath(models_dir),
+                "files": file_details,
+                "total_files": len(files)
+            }
+        else:
+            return {
+                "models_folder_exists": False,
+                "error": f"Models folder not found at {models_dir}"
+            }
+    except Exception as e:
+        return {
+            "error": f"Error accessing models folder: {str(e)}",
+            "models_folder_exists": False
+        }
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
