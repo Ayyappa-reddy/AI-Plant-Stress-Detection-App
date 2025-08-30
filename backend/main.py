@@ -51,7 +51,11 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend domain
+    allow_origins=[
+        "https://ai-plant-stress-detection-app-2.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:8000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -160,8 +164,49 @@ def load_model():
     """Load the trained model and class names"""
     global model, class_names
     
-    model_path = "models/plant_model.pth"
-    class_names_path = "models/class_names.json"
+    import os
+    
+    # Get current working directory and try different paths
+    current_dir = os.getcwd()
+    print(f"Current working directory: {current_dir}")
+    
+    # Try different possible paths for models
+    possible_model_paths = [
+        "models/plant_model.pth",
+        "./models/plant_model.pth",
+        os.path.join(current_dir, "models", "plant_model.pth"),
+        "backend/models/plant_model.pth"
+    ]
+    
+    possible_class_paths = [
+        "models/class_names.json",
+        "./models/class_names.json", 
+        os.path.join(current_dir, "models", "class_names.json"),
+        "backend/models/class_names.json"
+    ]
+    
+    model_path = None
+    class_names_path = None
+    
+    # Find model file
+    for path in possible_model_paths:
+        if os.path.exists(path):
+            model_path = path
+            print(f"Found model at: {path}")
+            break
+    
+    # Find class names file
+    for path in possible_class_paths:
+        if os.path.exists(path):
+            class_names_path = path
+            print(f"Found class names at: {path}")
+            break
+    
+    if not model_path or not class_names_path:
+        print("Available files in current directory:")
+        for root, dirs, files in os.walk(current_dir):
+            print(f"  {root}: {files}")
+        raise FileNotFoundError(f"Model files not found. Tried paths: {possible_model_paths}")
     
     try:
         # Load class names
@@ -270,7 +315,9 @@ async def root():
         "version": "1.0.0",
         "status": "running",
         "model_loaded": model is not None,
-        "num_classes": len(class_names) if class_names else 0
+        "num_classes": len(class_names) if class_names else 0,
+        "working_directory": os.getcwd(),
+        "available_files": os.listdir(".") if os.path.exists(".") else []
     }
 
 @app.get("/health")
