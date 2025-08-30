@@ -107,7 +107,7 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
       // Transform the result to match our interface
       const transformedResult: PredictionResult = {
         predicted_class: result.predicted_class,
-        formatted_class_name: result.predicted_class.replace(/_/g, ' ').replace(/\s+/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        formatted_class_name: result.predicted_class.replace(/_/g, ' ').replace(/\s+/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()),
         confidence: result.confidence,
         severity: result.confidence >= 90 ? 'High' : result.confidence >= 70 ? 'Medium' : result.confidence >= 50 ? 'Low' : 'Very Low',
         top_predictions: result.top3_predictions || [],
