@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Mail, Send, CheckCircle, AlertCircle } from 'lucide-react'
 import { ContactFormData } from '../types'
+import { getApiUrl } from '../config/api'
 
 export default function ContactForm() {
   const [formData, setFormData] = useState<ContactFormData>({
@@ -59,7 +60,7 @@ export default function ContactForm() {
 
     try {
       // Call the backend contact endpoint
-      const response = await fetch('http://localhost:8000/contact', {
+      const response = await fetch(getApiUrl('/contact'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

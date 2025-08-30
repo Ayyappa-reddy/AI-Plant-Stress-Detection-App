@@ -2,6 +2,7 @@ import { useState, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Upload, Camera, X, Loader2 } from 'lucide-react'
 import { PredictionResult, UploadState } from '../types'
+import { getApiUrl } from '../config/api'
 
 interface ImageUploadProps {
   onAnalysisStart: () => void
@@ -93,7 +94,7 @@ export default function ImageUpload({ onAnalysisStart, onPredictionComplete, isA
       const formData = new FormData()
       formData.append('file', uploadState.selectedFile)
 
-      const response = await fetch('http://localhost:8000/predict', {
+              const response = await fetch(getApiUrl('/predict'), {
         method: 'POST',
         body: formData,
       })
