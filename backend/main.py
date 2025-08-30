@@ -172,15 +172,17 @@ def load_model():
     
     # Try different possible paths for models
     possible_model_paths = [
-        "models/plant_model.pth",
-        "./models/plant_model.pth",
+        "./models/plant_model.pth",  # When running from backend directory
+        "models/plant_model.pth",    # When running from root
+        "../models/plant_model.pth", # When running from backend subdirectory
         os.path.join(current_dir, "models", "plant_model.pth"),
         "backend/models/plant_model.pth"
     ]
     
     possible_class_paths = [
-        "models/class_names.json",
-        "./models/class_names.json", 
+        "./models/class_names.json",  # When running from backend directory
+        "models/class_names.json",    # When running from root
+        "../models/class_names.json", # When running from backend subdirectory
         os.path.join(current_dir, "models", "class_names.json"),
         "backend/models/class_names.json"
     ]
@@ -302,10 +304,12 @@ async def startup_event():
     """Load model on startup"""
     try:
         load_model()
-        print("API started successfully!")
+        print("API started successfully with model loaded!")
     except Exception as e:
-        print(f"Error loading model: {e}")
-        raise e
+        print(f"Warning: Model failed to load: {e}")
+        print("API will start without model - some endpoints may not work")
+        # Don't raise the error, just log it and continue
+        # This allows the API to start even if model loading fails
 
 @app.get("/")
 async def root():
@@ -332,6 +336,13 @@ async def health_check():
 @app.post("/predict")
 async def predict(file: UploadFile = File(...)):
     """Predict plant disease from uploaded image"""
+    
+    # Check if model is loaded
+    if model is None:
+        raise HTTPException(
+            status_code=503, 
+            detail="Model not loaded. Please check server logs and try again later."
+        )
     
     # Validate file
     if not file.content_type.startswith('image/'):
